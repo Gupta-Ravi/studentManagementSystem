@@ -6,7 +6,6 @@ def connect_to_database():
     sql.row_factory = sqlite3.Row
     return sql 
 
-
 def get_database():
     if not hasattr(g, 'student_db'):
         g.student_db = connect_to_database()
@@ -20,6 +19,3 @@ def get_current_user():
         user_cur = db.execute('select * from teachers where name = ?', [user])
         user = user_cur.fetchone()
         return user
-
-
-
