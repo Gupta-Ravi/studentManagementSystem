@@ -1,10 +1,10 @@
 from flask import Flask, url_for, render_template, request, redirect, session, g
 from database import get_database, get_current_user
-from werkzeug.security import generate_password_hash, check_password_hash
-import os
+# from werkzeug.security import generate_password_hash, check_password_hash
+
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.urandom(24)
+app.config['SECRET_KEY'] = "SECRET_KEY"
 
 
 @app.teardown_appcontext
@@ -31,8 +31,15 @@ def login():
         user_cursor = db.execute('select * from teachers where name = ?', [name])
         user = user_cursor.fetchone()
 
+        # if user:
+        #     if check_password_hash(user['password'], password):
+        #         session['user'] = user['name']
+        #         return redirect(url_for('dashboard'))
+        #     else:
+        #         error = "Username or Password did not match"
+        # else:
         if user:
-            if check_password_hash(user['password'], password):
+            if user['password'] == password:
                 session['user'] = user['name']
                 return redirect(url_for('dashboard'))
             else:
@@ -49,7 +56,7 @@ def register():
     if request.method == 'POST':
         name = request.form['name']
         password = request.form['password']
-        hashed_password = generate_password_hash(password)
+        # hashed_password = generate_password_hash(password)
 
         dbuser_cursor = db.execute('select * from teachers where name = ?', [name])
         existing_username = dbuser_cursor.fetchone()
@@ -57,7 +64,7 @@ def register():
         if existing_username:
             return render_template('register.html', register_error="Username already taken")
 
-        db.execute('insert into teachers ( name, password ) values (?,?)', [name, hashed_password])
+        db.execute('insert into teachers ( name, password ) values (?,?)', [name, password])
         db.commit()
         return redirect(url_for('index'))
 
@@ -134,4 +141,4 @@ def logout():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
