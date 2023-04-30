@@ -1,4 +1,5 @@
 blinker
+gunicorn
 click
 colorama
 Flask
