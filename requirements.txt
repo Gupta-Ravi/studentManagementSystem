@@ -1,0 +1,5 @@
+gunicorn
+flask
+werkzeug.security
+os
+sqlite3
